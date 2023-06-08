@@ -11,7 +11,7 @@ const app: Application = express();
 const PORT: number = Number(process.env.PORT) || 3000;
 
 const corsOptions = {
-  origin: process.env.ORIGIN_URL ?? "http://localhost:3001",
+  origin: process.env.ORIGIN_URL ?? "http://localhost:3000",
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -27,11 +27,18 @@ app.set("trust proxy", "loopback, linklocal, uniquelocal");
 app.use(cors(corsOptions));
 app.use(helmet());
 
+app.get("/*", function (req, res, next) {
+  res.setHeader("Last-Modified", new Date().toUTCString());
+  next();
+});
+
 app.use("/paint", paintRouter);
 
 app.use("/", (req: Request, res: Response): void => {
   res.send("Hello world!");
 });
+
+app.use(express.static(__dirname + "/static"));
 
 app.listen(PORT, (): void => {
   console.log("SERVER IS UP ON PORT:", PORT);

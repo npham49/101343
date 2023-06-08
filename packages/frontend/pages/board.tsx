@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { getAllPaints } from "@/lib/paintApi";
 import { GlobalContext } from "@/context/state";
@@ -10,42 +10,39 @@ import { GlobalContext } from "@/context/state";
 import { ToastContainer } from "react-toastify";
 
 import { Paint } from "@/typings";
-import DroppableColumn from "@/components/DroppableColumn";
 import { usePaintMutations } from "@/mutations/paint";
 
 import "react-toastify/dist/ReactToastify.css";
+import NewItem from "@/components/NewItem";
+import Table from "@/components/Table";
+import EditItemForm from "@/components/EditItemForm";
+import StockForm from "@/components/StockForm";
 const inter = Inter({ subsets: ["latin"] });
 
 const Board = () => {
-  const queryClient = useQueryClient();
-
-  const { isLoading, isError, error, data } = useQuery("paints", getAllPaints);
-
-  const [paints, updatePaints] = useState(data ?? []);
+  // const [paints, setPaints] = useState<Paint[]>(data ?? []);
   const [destination, setDestination] = useState({});
-  const [newPaint, setNewPaint] = useState({
-    name: "",
-    status: "",
-    stock: 0,
-  });
 
-  const { createPaintMutation, updatePaintMutation, deletePaintMutation } =
-    usePaintMutations();
-  const { EditItem, setEditItem, newStock, setNewStock } =
+  const { updatePaintMutation } = usePaintMutations();
+  const { setEditItem, setNewStock, paints, setPaints } =
     React.useContext(GlobalContext);
 
+  const { isLoading, isError, error, data } = useQuery(
+    ["paints"],
+    getAllPaints
+  );
   useEffect(() => {
-    updatePaints(data ?? []);
+    setPaints(data ?? []);
   }, [data]);
 
   const onDragEnd = async (result: DropResult) => {
-    console.log(result);
+    // console.log(result);
     if (!result?.destination) return;
     if (result.destination.droppableId === result.source.droppableId) return;
 
     if (result.destination.droppableId === "Out of Stock") {
       setNewStock(0);
-      updateData(result, 0);
+      updateData(result, { stock: 0, id: result.draggableId }, paints);
     } else {
       setNewStock(
         data.filter(
@@ -65,21 +62,21 @@ const Board = () => {
     }
   };
 
-  const updateData = async (result: any, stock: number) => {
-    if (result.name !== undefined) {
+  const updateData = async (result: any, paint: Paint, paints: Paint[]) => {
+    if (result === undefined) {
       updatePaintMutation.mutate({
-        id: result.draggableId,
-        name: result.name,
-        status: result.destination.droppableId,
+        id: paint.id,
+        name: paint.name,
+        status: paint.status,
         updatedAt: new Date(),
-        stock: stock,
+        stock: paint.stock,
       });
     } else {
       updatePaintMutation.mutate({
         id: result.draggableId,
         status: result.destination.droppableId,
         updatedAt: new Date(),
-        stock: stock,
+        stock: paint.stock,
       });
       const items = [...paints];
 
@@ -120,268 +117,12 @@ const Board = () => {
             Add new paint
           </button>
         </div>
-        <div className="overflow-x-auto h-full">
-          <table className="table table-pin-rows table-fixed border-separate border-spacing-1 mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-full w-[3vw]">
-            <thead className="text-base font-bold text-black">
-              <tr>
-                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
-                  Available
-                </th>
-                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
-                  Running Low
-                </th>
-                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
-                  Out of Stock
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <DroppableColumn status="Available" paints={paints} />
-                <DroppableColumn status="Running Low" paints={paints} />
-                <DroppableColumn status="Out of Stock" paints={paints} />
-              </tr>
-            </tbody>
-          </table>
-          <dialog id="StockModal" className="modal">
-            <form method="dialog" className="modal-box">
-              <h3 className="font-bold text-lg">Please enter the new Stock</h3>
-              <input
-                type="number"
-                name="newStock"
-                id="newStock"
-                onChange={(e) => {
-                  setNewStock(Number(e.target.value));
-                }}
-                className="input input-bordered"
-                value={newStock}
-              />
-              <div className="modal-action">
-                <button
-                  onClick={() => {
-                    updateData(destination, newStock);
-                  }}
-                  className="btn"
-                >
-                  Save
-                </button>
-                <button className="btn">Close</button>
-              </div>
-            </form>
-          </dialog>
-          <dialog id="EditModal" className="modal">
-            <form method="dialog" className="modal-box">
-              <h3 className="font-bold text-lg">Edit item</h3>
-              <label className="label">
-                <span className="label-text">Stock</span>
-              </label>
-              <input
-                type="number"
-                name="newStock"
-                id="newStock"
-                onChange={(e) => {
-                  setEditItem({ ...EditItem, stock: Number(e.target.value) });
-                }}
-                className="input input-bordered"
-                value={EditItem.stock}
-              />
-              <label className="label">
-                <span className="label-text">Paint Name</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                onChange={(e) => {
-                  setEditItem({ ...EditItem, name: e.target.value });
-                }}
-                className="input input-bordered"
-                value={EditItem.name}
-              />
-              <label className="label">
-                <span className="label-text">Stock Status</span>
-              </label>
-              <div className="form-control">
-                <label className="label cursor-pointer">
-                  <span className="label-text">Available</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-green-500"
-                    value="Available"
-                    onChange={(e) => {
-                      setEditItem({ ...EditItem, status: e.target.value });
-                    }}
-                  />
-                </label>
-                <label className="label cursor-pointer">
-                  <span className="label-text">Running Low</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-yellow-500"
-                    value="Running Low"
-                    onChange={(e) => {
-                      setEditItem({ ...EditItem, status: e.target.value });
-                    }}
-                  />
-                </label>
-                <label className="label cursor-pointer">
-                  <span className="label-text">Out of Stock</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-red-500"
-                    value="Out of Stock"
-                    onChange={(e) => {
-                      setEditItem({ ...EditItem, status: e.target.value });
-                    }}
-                  />
-                </label>
-              </div>
-              <dialog id="DeleteModal" className="modal">
-                <form method="dialog" className="modal-box">
-                  <h3 className="font-bold text-lg">
-                    Are you sure you want to delete {EditItem.name}
-                  </h3>
-                  <div className="modal-action">
-                    <button
-                      onClick={() => {
-                        deletePaintMutation.mutate(Number(EditItem.id));
-                      }}
-                      className="btn"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      className="btn"
-                      onClick={() => {
-                        // @ts-ignore
-                        window.EditModal.showModal();
-                      }}
-                    >
-                      No
-                    </button>
-                  </div>
-                </form>
-              </dialog>
-              <div className="modal-action">
-                <button
-                  onClick={() => {
-                    // @ts-ignore
-                    window.DeleteModal.showModal();
-                  }}
-                  className="btn btn-error"
-                >
-                  Delete Paint
-                </button>
-                <button
-                  onClick={() => {
-                    updateData(
-                      {
-                        name: EditItem.name,
-                        draggableId: EditItem.id,
-                        destination: { droppableId: EditItem.status },
-                      },
-                      EditItem.stock
-                    );
-                  }}
-                  className="btn"
-                >
-                  Save
-                </button>
-                <button className="btn">Close</button>
-              </div>
-            </form>
-          </dialog>
-          <dialog id="NewModal" className="modal">
-            <form method="dialog" className="modal-box">
-              <h3 className="font-bold text-lg">New item</h3>
-              <label className="label">
-                <span className="label-text">Stock</span>
-              </label>
-              <input
-                type="number"
-                name="newStock"
-                id="newStock"
-                onChange={(e) => {
-                  setNewPaint({ ...newPaint, stock: Number(e.target.value) });
-                }}
-                className="input input-bordered"
-                value={newPaint.stock}
-              />
-              <label className="label">
-                <span className="label-text">Paint Name</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                onChange={(e) => {
-                  setNewPaint({ ...newPaint, name: e.target.value });
-                }}
-                className="input input-bordered"
-                value={newPaint.name}
-              />
-              <label className="label">
-                <span className="label-text">Stock Status</span>
-              </label>
-              <div className="form-control">
-                <label className="label cursor-pointer">
-                  <span className="label-text">Available</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-green-500"
-                    value="Available"
-                    onChange={(e) => {
-                      setNewPaint({ ...newPaint, status: e.target.value });
-                    }}
-                  />
-                </label>
-                <label className="label cursor-pointer">
-                  <span className="label-text">Running Low</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-yellow-500"
-                    value="Running Low"
-                    onChange={(e) => {
-                      setNewPaint({ ...newPaint, status: e.target.value });
-                    }}
-                  />
-                </label>
-                <label className="label cursor-pointer">
-                  <span className="label-text">Out of Stock</span>
-                  <input
-                    type="radio"
-                    name="radio-10"
-                    className="radio checked:bg-red-500"
-                    value="Out of Stock"
-                    onChange={(e) => {
-                      setNewPaint({ ...newPaint, status: e.target.value });
-                    }}
-                  />
-                </label>
-              </div>
-              <div className="modal-action">
-                <button
-                  onClick={() => {
-                    createPaintMutation.mutate({
-                      name: newPaint.name,
-                      stock: newPaint.stock,
-                      status: newPaint.status,
-                    });
-                  }}
-                  className="btn"
-                >
-                  Save
-                </button>
-                <button className="btn">Close</button>
-              </div>
-            </form>
-          </dialog>
-        </div>
+        <Table paints={paints} />
+        {/* Modal to input new stock on changin Status to Running Low or Available */}
+        <StockForm destination={destination} />
+        {/* Modal for editing paint information */}
+        <EditItemForm />
+        <NewItem />
         <ToastContainer
           position="top-center"
           autoClose={5000}

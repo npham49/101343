@@ -16,7 +16,7 @@ export const getPaint = async (id: number) => {
 };
 
 export const createPaint = async (paint: Paint) => {
-  if (paint.stock <= 5) {
+  if (paint.stock <= 5 && paint.stock > 0) {
     paint.status = "Running Low";
   } else if (paint.stock <= 0) {
     paint.status = "Out of Stock";

@@ -2,13 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClientProvider,
-} from "react-query";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import {
   getPaint,
   getAllPaints,
@@ -16,6 +11,10 @@ import {
   updatePaint,
   deletePaint,
 } from "@/lib/paintApi";
+import { GlobalContext } from "@/context/state";
+
+import { Paint } from "@/typings";
+import DroppableColumn from "@/components/DroppableColumn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,14 +24,9 @@ const Board = () => {
   const { isLoading, isError, error, data } = useQuery("paints", getAllPaints);
 
   const [paints, updatePaints] = useState(data ?? []);
-  const [newStock, updateNewStock] = useState(0);
   const [destination, setDestination] = useState({});
-  const [edit, setEdit] = useState({
-    id: "",
-    name: "",
-    stock: 0,
-    status: "",
-  });
+  const { EditItem, setEditItem, newStock, setNewStock } =
+    React.useContext(GlobalContext);
 
   useEffect(() => {
     updatePaints(data ?? []);
@@ -45,18 +39,30 @@ const Board = () => {
     },
   });
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: DropResult) => {
     console.log(result);
     if (!result?.destination) return;
     if (result.destination.droppableId === result.source.droppableId) return;
 
     if (result.destination.droppableId === "Out of Stock") {
-      updateNewStock(0);
+      setNewStock(0);
       updateData(result, 0);
     } else {
+      setNewStock(
+        data.filter(
+          (paint: Paint) => String(paint.id) === result.draggableId
+        )[0].stock
+      );
       setDestination(result);
       //@ts-ignore
       window.StockModal.showModal();
+    }
+  };
+
+  const onDragStart = () => {
+    // if device supports vibration, vibrate for 100ms to signal drag start
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(100);
     }
   };
 
@@ -94,190 +100,33 @@ const Board = () => {
     return <div>Error: {String(error)}</div>;
   }
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div
         className={`container mx-auto min-h-screen pt-10 ${inter.className}`}
       >
         <div className="flex flex-col justify-between">
           <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
         </div>
-        <div className="overflow-x-auto">
-          <table className="table table-pin-rows table-fixed bg-gray-300 min-h-screen">
+        <div className="overflow-x-auto w-auto h-full">
+          <table className="table table-pin-rows table-fixed mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-auto w-[3vw]">
             <thead>
               <tr>
-                <th className="border-r-2 border-gray-400">Available</th>
-                <th className="border-r-2 border-gray-400">Running Low</th>
-                <th>Out of Stock</th>
+                <th className="border-r-2 border-gray-400 w-[350px]">
+                  Available
+                </th>
+                <th className="border-r-2 border-gray-400 w-[350px]">
+                  Running Low
+                </th>
+                <th className="border-r-2 border-gray-400 w-[350px]">
+                  Out of Stock
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <Droppable droppableId="Available">
-                  {(provided) => (
-                    <td
-                      id="docked"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="border-r-2 border-gray-400 align-top bg-green-200"
-                    >
-                      <div className="flex flex-col justify-item h-full">
-                        {paints
-                          .filter((paint: any) => paint.status === "Available")
-                          .map((paint: any, index: number) => (
-                            <Draggable
-                              draggableId={String(paint.id)}
-                              index={index}
-                              key={paint.id}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    opacity: snapshot.isDragging ? 0.5 : 1,
-                                    ...provided.draggableProps.style,
-                                  }}
-                                  className="flex flex-col bg-white p-2 m-2 rounded-lg shadow-lg"
-                                >
-                                  <div className="text-lg font-semibold">
-                                    {paint.name}
-                                  </div>
-                                  <div>
-                                    <p>Status: {paint.status}</p>
-                                    <p>Stock: {paint.stock}</p>
-                                    <button
-                                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                      onClick={() => {
-                                        // @ts-ignore
-                                        setEdit(paint);
-                                        window.EditModal.showModal();
-                                      }}
-                                    >
-                                      Edit
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        {provided.placeholder}
-                      </div>
-                    </td>
-                  )}
-                </Droppable>
-                <Droppable droppableId="Running Low">
-                  {(provided) => (
-                    <td
-                      id="docked"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="border-r-2 border-gray-400 align-top bg-yellow-200"
-                    >
-                      <div className="flex flex-col align-top">
-                        {paints
-                          .filter(
-                            (paint: any) => paint.status === "Running Low"
-                          )
-                          .map((paint: any, index: number) => (
-                            <Draggable
-                              draggableId={String(paint.id)}
-                              index={index}
-                              key={paint.id}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    opacity: snapshot.isDragging ? 0.5 : 1,
-                                    ...provided.draggableProps.style,
-                                  }}
-                                  className="flex flex-col bg-white p-2 m-2 rounded-lg shadow-lg"
-                                >
-                                  <div className="text-lg font-semibold">
-                                    {paint.name}
-                                  </div>
-                                  <div>
-                                    <p>Status: {paint.status}</p>
-                                    <p>Stock: {paint.stock}</p>
-                                    <button
-                                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                      onClick={() => {
-                                        // @ts-ignore
-                                        setEdit(paint);
-                                        window.EditModal.showModal();
-                                      }}
-                                    >
-                                      Edit
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        {provided.placeholder}
-                      </div>
-                    </td>
-                  )}
-                </Droppable>
-                <Droppable droppableId="Out of Stock">
-                  {(provided) => (
-                    <td
-                      id="docked"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="border-r-2 border-gray-400 align-top bg-red-200"
-                    >
-                      <div className="flex flex-col">
-                        {paints
-                          .filter(
-                            (paint: any) => paint.status === "Out of Stock"
-                          )
-                          .map((paint: any, index: number) => (
-                            <Draggable
-                              draggableId={String(paint.id)}
-                              index={index}
-                              key={paint.id}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{
-                                    opacity: snapshot.isDragging ? 0.5 : 1,
-                                    ...provided.draggableProps.style,
-                                  }}
-                                  className="flex flex-col bg-white p-2 m-2 rounded-lg shadow-lg"
-                                >
-                                  <div className="text-lg font-semibold">
-                                    {paint.name}
-                                  </div>
-                                  <div>
-                                    <p>Status: {paint.status}</p>
-                                    <p>Stock: {paint.stock}</p>
-                                    <button
-                                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                      onClick={() => {
-                                        // @ts-ignore
-                                        setEdit(paint);
-                                        window.EditModal.showModal();
-                                      }}
-                                    >
-                                      Edit
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        {provided.placeholder}
-                      </div>
-                    </td>
-                  )}
-                </Droppable>
+                <DroppableColumn status="Available" paints={paints} />
+                <DroppableColumn status="Running Low" paints={paints} />
+                <DroppableColumn status="Out of Stock" paints={paints} />
               </tr>
             </tbody>
           </table>
@@ -289,7 +138,7 @@ const Board = () => {
                 name="newStock"
                 id="newStock"
                 onChange={(e) => {
-                  updateNewStock(Number(e.target.value));
+                  setNewStock(Number(e.target.value));
                 }}
                 className="input input-bordered"
                 value={newStock}
@@ -318,10 +167,10 @@ const Board = () => {
                 name="newStock"
                 id="newStock"
                 onChange={(e) => {
-                  setEdit({ ...edit, stock: Number(e.target.value) });
+                  setEditItem({ ...EditItem, stock: Number(e.target.value) });
                 }}
                 className="input input-bordered"
-                value={edit.stock}
+                value={EditItem.stock}
               />
               <label className="label">
                 <span className="label-text">Paint Name</span>
@@ -331,10 +180,10 @@ const Board = () => {
                 name="name"
                 id="name"
                 onChange={(e) => {
-                  setEdit({ ...edit, name: e.target.value });
+                  setEditItem({ ...EditItem, name: e.target.value });
                 }}
                 className="input input-bordered"
-                value={edit.name}
+                value={EditItem.name}
               />
               <label className="label">
                 <span className="label-text">Stock Status</span>
@@ -348,7 +197,7 @@ const Board = () => {
                     className="radio checked:bg-green-500"
                     value="Available"
                     onChange={(e) => {
-                      setEdit({ ...edit, status: e.target.value });
+                      setEditItem({ ...EditItem, status: e.target.value });
                     }}
                   />
                 </label>
@@ -360,7 +209,7 @@ const Board = () => {
                     className="radio checked:bg-yellow-500"
                     value="Running Low"
                     onChange={(e) => {
-                      setEdit({ ...edit, status: e.target.value });
+                      setEditItem({ ...EditItem, status: e.target.value });
                     }}
                   />
                 </label>
@@ -372,7 +221,7 @@ const Board = () => {
                     className="radio checked:bg-red-500"
                     value="Out of Stock"
                     onChange={(e) => {
-                      setEdit({ ...edit, status: e.target.value });
+                      setEditItem({ ...EditItem, status: e.target.value });
                     }}
                   />
                 </label>
@@ -382,11 +231,11 @@ const Board = () => {
                   onClick={() => {
                     updateData(
                       {
-                        name: edit.name,
-                        draggableId: edit.id,
-                        destination: { droppableId: edit.status },
+                        name: EditItem.name,
+                        draggableId: EditItem.id,
+                        destination: { droppableId: EditItem.status },
                       },
-                      edit.stock
+                      EditItem.stock
                     );
                   }}
                   className="btn"

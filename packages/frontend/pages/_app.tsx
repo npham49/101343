@@ -1,5 +1,6 @@
 import React from "react";
 import "@/styles/globals.css";
+import { GlobalContextProvider } from "@/context/state";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -9,7 +10,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     // Provide the client to your App
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      <GlobalContextProvider>
+        <Component {...pageProps} />
+      </GlobalContextProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

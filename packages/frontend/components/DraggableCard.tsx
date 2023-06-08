@@ -30,7 +30,6 @@ const DraggableCard = (props: IDraggableCardProps) => {
           <div>
             <div className="text-lg font-semibold">{props.paint.name}</div>
             <p>
-              Status:
               <span
                 className={`border-0 rounded-md p-[4px] m-[2px] text-white border-gray-400 align-top  ${
                   props.paint.status === "Running Low" && " bg-yellow-600"

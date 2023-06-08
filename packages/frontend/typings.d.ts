@@ -1,7 +1,7 @@
 export interface Paint {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
   stock: number;
-  status: string;
+  status?: string;
   updatedAt?: Date;
 }

@@ -1,3 +1,4 @@
+import { Paint } from "@/typings";
 import axios from "axios";
 
 const paintApi = axios.create({
@@ -14,11 +15,25 @@ export const getPaint = async (id: number) => {
   return await paintApi.get(`/paint/${id}`);
 };
 
-export const createPaint = async (paint: any) => {
+export const createPaint = async (paint: Paint) => {
+  if (paint.stock <= 5 && paint.stock > 0) {
+    paint.status = "Running Low";
+  } else if (paint.stock <= 0) {
+    paint.status = "Out of Stock";
+  } else if (paint.stock > 5) {
+    paint.status = "Available";
+  }
   return await paintApi.post("/paint", paint);
 };
 
-export const updatePaint = async (paint: any) => {
+export const updatePaint = async (paint: Paint) => {
+  if (paint.stock <= 5 && paint.stock > 0) {
+    paint.status = "Running Low";
+  } else if (paint.stock <= 0) {
+    paint.status = "Out of Stock";
+  } else if (paint.stock > 5) {
+    paint.status = "Available";
+  }
   return await paintApi.put(`/paint/${paint.id}`, paint);
 };
 

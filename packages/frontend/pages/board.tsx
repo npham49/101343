@@ -25,6 +25,11 @@ const Board = () => {
 
   const [paints, updatePaints] = useState(data ?? []);
   const [destination, setDestination] = useState({});
+  const [newPaint, setNewPaint] = useState({
+    name: "",
+    status: "",
+    stock: 0,
+  });
   const { EditItem, setEditItem, newStock, setNewStock } =
     React.useContext(GlobalContext);
 
@@ -33,6 +38,20 @@ const Board = () => {
   }, [data]);
 
   const updatePaintMutation = useMutation(updatePaint, {
+    onSuccess: () => {
+      // Invalidates cache and refetch
+      queryClient.invalidateQueries("paints");
+    },
+  });
+
+  const createPaintMutation = useMutation(createPaint, {
+    onSuccess: () => {
+      // Invalidates cache and refetch
+      queryClient.invalidateQueries("paints");
+    },
+  });
+
+  const deletePaintMutation = useMutation(deletePaint, {
     onSuccess: () => {
       // Invalidates cache and refetch
       queryClient.invalidateQueries("paints");
@@ -104,11 +123,25 @@ const Board = () => {
       <div
         className={`container mx-auto min-h-screen pt-10 ${inter.className}`}
       >
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col md:flex-row justify-between items-center">
           <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
+          <button
+            className="btn btn-primary max-w-[150px]"
+            onClick={() => {
+              setEditItem({
+                id: "",
+                name: "",
+                status: "",
+                stock: 0,
+              }); // @ts-ignore
+              window.NewModal.showModal();
+            }}
+          >
+            Add new paint
+          </button>
         </div>
-        <div className="overflow-x-auto w-auto h-full">
-          <table className="table table-pin-rows table-fixed mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-auto w-[3vw]">
+        <div className="overflow-x-auto h-full">
+          <table className="table table-pin-rows table-fixed mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-full w-[3vw]">
             <thead>
               <tr>
                 <th className="border-r-2 border-gray-400 w-[350px]">
@@ -229,6 +262,21 @@ const Board = () => {
               <div className="modal-action">
                 <button
                   onClick={() => {
+                    let alert = window.confirm(
+                      "Are you sure you want to delete this paint?"
+                    );
+                    if (alert) {
+                      deletePaintMutation.mutate(Number(EditItem.id));
+                    } else {
+                      return;
+                    }
+                  }}
+                  className="btn btn-error"
+                >
+                  Delete Paint
+                </button>
+                <button
+                  onClick={() => {
                     updateData(
                       {
                         name: EditItem.name,
@@ -237,6 +285,93 @@ const Board = () => {
                       },
                       EditItem.stock
                     );
+                  }}
+                  className="btn"
+                >
+                  Save
+                </button>
+                <button className="btn">Close</button>
+              </div>
+            </form>
+          </dialog>
+          <dialog id="NewModal" className="modal">
+            <form method="dialog" className="modal-box">
+              <h3 className="font-bold text-lg">New item</h3>
+              <label className="label">
+                <span className="label-text">Stock</span>
+              </label>
+              <input
+                type="number"
+                name="newStock"
+                id="newStock"
+                onChange={(e) => {
+                  setNewPaint({ ...newPaint, stock: Number(e.target.value) });
+                }}
+                className="input input-bordered"
+                value={newPaint.stock}
+              />
+              <label className="label">
+                <span className="label-text">Paint Name</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                onChange={(e) => {
+                  setNewPaint({ ...newPaint, name: e.target.value });
+                }}
+                className="input input-bordered"
+                value={newPaint.name}
+              />
+              <label className="label">
+                <span className="label-text">Stock Status</span>
+              </label>
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <span className="label-text">Available</span>
+                  <input
+                    type="radio"
+                    name="radio-10"
+                    className="radio checked:bg-green-500"
+                    value="Available"
+                    onChange={(e) => {
+                      setNewPaint({ ...newPaint, status: e.target.value });
+                    }}
+                  />
+                </label>
+                <label className="label cursor-pointer">
+                  <span className="label-text">Running Low</span>
+                  <input
+                    type="radio"
+                    name="radio-10"
+                    className="radio checked:bg-yellow-500"
+                    value="Running Low"
+                    onChange={(e) => {
+                      setNewPaint({ ...newPaint, status: e.target.value });
+                    }}
+                  />
+                </label>
+                <label className="label cursor-pointer">
+                  <span className="label-text">Out of Stock</span>
+                  <input
+                    type="radio"
+                    name="radio-10"
+                    className="radio checked:bg-red-500"
+                    value="Out of Stock"
+                    onChange={(e) => {
+                      setNewPaint({ ...newPaint, status: e.target.value });
+                    }}
+                  />
+                </label>
+              </div>
+              <div className="modal-action">
+                <button
+                  onClick={() => {
+                    createPaintMutation.mutate({
+                      name: newPaint.name,
+                      stock: newPaint.stock,
+                      status: newPaint.status,
+                    });
                   }}
                   className="btn"
                 >

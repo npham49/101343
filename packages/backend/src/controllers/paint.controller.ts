@@ -26,7 +26,7 @@ const createPaint = async (req: any, res: any) => {
       req.body.name,
       Number(req.body.stock),
       req.body.status,
-      new Date(req.body.updatedAt)
+      new Date()
     );
     return res.status(200).json(paint);
   } catch (error: any) {

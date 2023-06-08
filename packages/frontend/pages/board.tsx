@@ -2,20 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import {
-  getPaint,
-  getAllPaints,
-  createPaint,
-  updatePaint,
-  deletePaint,
-} from "@/lib/paintApi";
+import { getAllPaints } from "@/lib/paintApi";
 import { GlobalContext } from "@/context/state";
+
+import { ToastContainer } from "react-toastify";
 
 import { Paint } from "@/typings";
 import DroppableColumn from "@/components/DroppableColumn";
+import { usePaintMutations } from "@/mutations/paint";
 
+import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
 
 const Board = () => {
@@ -30,33 +28,15 @@ const Board = () => {
     status: "",
     stock: 0,
   });
+
+  const { createPaintMutation, updatePaintMutation, deletePaintMutation } =
+    usePaintMutations();
   const { EditItem, setEditItem, newStock, setNewStock } =
     React.useContext(GlobalContext);
 
   useEffect(() => {
     updatePaints(data ?? []);
   }, [data]);
-
-  const updatePaintMutation = useMutation(updatePaint, {
-    onSuccess: () => {
-      // Invalidates cache and refetch
-      queryClient.invalidateQueries("paints");
-    },
-  });
-
-  const createPaintMutation = useMutation(createPaint, {
-    onSuccess: () => {
-      // Invalidates cache and refetch
-      queryClient.invalidateQueries("paints");
-    },
-  });
-
-  const deletePaintMutation = useMutation(deletePaint, {
-    onSuccess: () => {
-      // Invalidates cache and refetch
-      queryClient.invalidateQueries("paints");
-    },
-  });
 
   const onDragEnd = async (result: DropResult) => {
     console.log(result);
@@ -121,12 +101,12 @@ const Board = () => {
   return (
     <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div
-        className={`container mx-auto min-h-screen pt-10 ${inter.className}`}
+        className={`container mx-auto min-h-[100vh-60px] pt-10 ${inter.className}`}
       >
-        <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-2">
           <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
           <button
-            className="btn btn-primary max-w-[150px]"
+            className="btn btn-primary max-w-[150px] text-white"
             onClick={() => {
               setEditItem({
                 id: "",
@@ -141,16 +121,16 @@ const Board = () => {
           </button>
         </div>
         <div className="overflow-x-auto h-full">
-          <table className="table table-pin-rows table-fixed mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-full w-[3vw]">
-            <thead>
+          <table className="table table-pin-rows table-fixed border-separate border-spacing-1 mx-auto bg-gray-300 h-auto min-h-[80vh] md:w-full w-[3vw]">
+            <thead className="text-base font-bold text-black">
               <tr>
-                <th className="border-r-2 border-gray-400 w-[350px]">
+                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
                   Available
                 </th>
-                <th className="border-r-2 border-gray-400 w-[350px]">
+                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
                   Running Low
                 </th>
-                <th className="border-r-2 border-gray-400 w-[350px]">
+                <th className="border-r-2 border-gray-400 w-[350px] md:w-1/3 md:max-w-[350px] text-left">
                   Out of Stock
                 </th>
               </tr>
@@ -259,17 +239,37 @@ const Board = () => {
                   />
                 </label>
               </div>
+              <dialog id="DeleteModal" className="modal">
+                <form method="dialog" className="modal-box">
+                  <h3 className="font-bold text-lg">
+                    Are you sure you want to delete {EditItem.name}
+                  </h3>
+                  <div className="modal-action">
+                    <button
+                      onClick={() => {
+                        deletePaintMutation.mutate(Number(EditItem.id));
+                      }}
+                      className="btn"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={() => {
+                        // @ts-ignore
+                        window.EditModal.showModal();
+                      }}
+                    >
+                      No
+                    </button>
+                  </div>
+                </form>
+              </dialog>
               <div className="modal-action">
                 <button
                   onClick={() => {
-                    let alert = window.confirm(
-                      "Are you sure you want to delete this paint?"
-                    );
-                    if (alert) {
-                      deletePaintMutation.mutate(Number(EditItem.id));
-                    } else {
-                      return;
-                    }
+                    // @ts-ignore
+                    window.DeleteModal.showModal();
                   }}
                   className="btn btn-error"
                 >
@@ -382,6 +382,18 @@ const Board = () => {
             </form>
           </dialog>
         </div>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
     </DragDropContext>
   );

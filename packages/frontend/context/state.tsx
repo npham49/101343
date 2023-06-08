@@ -1,5 +1,5 @@
 import { Paint } from "@/typings";
-import React, { JSXElementConstructor, ReactElement, useState } from "react";
+import React, { useState } from "react";
 
 interface IGlobalContextProps {
   EditItem: Paint;

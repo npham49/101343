@@ -4,8 +4,7 @@ import { Paint } from "@/typings";
 import React from "react";
 
 const EditItemForm = () => {
-  const { EditItem, setEditItem, paints, setPaints } =
-    React.useContext(GlobalContext);
+  const { EditItem, setEditItem, paints } = React.useContext(GlobalContext);
   const { updatePaintMutation, deletePaintMutation } = usePaintMutations();
   const updateData = async (result: any, paint: Paint, paints: Paint[]) => {
     if (result === undefined) {

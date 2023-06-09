@@ -11,7 +11,10 @@ export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = React.useState(() => new QueryClient());
   return (
     // Provide the client to your App
-    <ClerkProvider {...pageProps}>
+    <ClerkProvider
+      publishableKey="pk_test_dXAtc3RhZy00NS5jbGVyay5hY2NvdW50cy5kZXYk"
+      {...pageProps}
+    >
       <QueryClientProvider client={queryClient}>
         <GlobalContextProvider>
           <NavBar />

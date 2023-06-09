@@ -23,7 +23,7 @@ const inter = Inter({ subsets: ["latin"] });
 const Board = () => {
   const [destination, setDestination] = useState({});
   const { user } = useUser();
-  const { updatePaintMutation } = usePaintMutations();
+  const { updatePaintMutation, updateData } = usePaintMutations();
   const { setEditItem, setNewStock, paints, setPaints, token, setToken } =
     React.useContext(GlobalContext);
   const { getToken } = useAuth();
@@ -49,7 +49,12 @@ const Board = () => {
 
     if (result.destination.droppableId === "Out of Stock") {
       setNewStock(0);
-      updateData(result, { stock: 0, id: result.draggableId }, paints);
+      updateData(
+        result,
+        { stock: 0, id: result.draggableId },
+        paints,
+        updatePaintMutation
+      );
     } else {
       setNewStock(
         data.filter(
@@ -68,34 +73,6 @@ const Board = () => {
       window.navigator.vibrate(100);
     }
   };
-
-  const updateData = async (result: any, paint: Paint, paints: Paint[]) => {
-    if (result === undefined) {
-      updatePaintMutation.mutate({
-        id: paint.id,
-        name: paint.name,
-        status: paint.status,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-    } else {
-      updatePaintMutation.mutate({
-        id: result.draggableId,
-        status: result.destination.droppableId,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-      const items = [...paints];
-
-      const [reorderedItem] = items.splice(result.source.index, 1);
-
-      items.splice(result.destination.index, 0, reorderedItem);
-
-      const idsOrderArray = items.map((task) => task.id);
-      localStorage.setItem("paintOrder", JSON.stringify(idsOrderArray));
-    }
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }

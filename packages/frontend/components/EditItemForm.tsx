@@ -1,37 +1,12 @@
 import { GlobalContext } from "@/context/state";
 import { usePaintMutations } from "@/mutations/paint";
-import { Paint } from "@/typings";
 import React from "react";
 
 const EditItemForm = () => {
   const { EditItem, setEditItem, paints } = React.useContext(GlobalContext);
-  const { updatePaintMutation, deletePaintMutation } = usePaintMutations();
-  const updateData = async (result: any, paint: Paint, paints: Paint[]) => {
-    if (result === undefined) {
-      updatePaintMutation.mutate({
-        id: paint.id,
-        name: paint.name,
-        status: paint.status,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-    } else {
-      updatePaintMutation.mutate({
-        id: result.draggableId,
-        status: result.destination.droppableId,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-      const items = [...paints];
+  const { updatePaintMutation, deletePaintMutation, updateData } =
+    usePaintMutations();
 
-      const [reorderedItem] = items.splice(result.source.index, 1);
-
-      items.splice(result.destination.index, 0, reorderedItem);
-
-      const idsOrderArray = items.map((task) => task.id);
-      localStorage.setItem("paintOrder", JSON.stringify(idsOrderArray));
-    }
-  };
   return (
     <dialog id="EditModal" className="modal">
       <form method="dialog" className="modal-box">
@@ -145,7 +120,7 @@ const EditItemForm = () => {
           </button>
           <button
             onClick={() => {
-              updateData(undefined, EditItem, paints);
+              updateData(undefined, EditItem, paints, updatePaintMutation);
             }}
             className="btn"
           >

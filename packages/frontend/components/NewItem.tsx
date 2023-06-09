@@ -2,12 +2,14 @@ import { usePaintMutations } from "@/mutations/paint";
 import React from "react";
 
 const NewItem = () => {
+  // This state is used to store the new paint item
   const [newPaint, setNewPaint] = React.useState({
     name: "",
     status: "",
     stock: 0,
   });
   const { createPaintMutation } = usePaintMutations();
+
   return (
     <dialog id="NewModal" className="modal">
       <form method="dialog" className="modal-box">
@@ -45,6 +47,7 @@ const NewItem = () => {
         <label className="label">
           <span className="font-bold label-text">Stock Status</span>
         </label>
+        {/* Radio group */}
         <div className="form-control">
           <label className="label cursor-pointer">
             <span className="label-text">Available</span>

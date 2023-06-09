@@ -19,7 +19,7 @@ RUN npm install --omit=dev
 RUN npm run build
 
 # Expose port 8002
-EXPOSE 8002
+EXPOSE 8000
 
 # Run app
 CMD [ "node","build/app.js" ]

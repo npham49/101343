@@ -18,19 +18,24 @@ import Table from "@/components/Table";
 import EditItemForm from "@/components/EditItemForm";
 import StockForm from "@/components/StockForm";
 import { useAuth, useUser } from "@clerk/nextjs";
+import Head from "next/head";
 const inter = Inter({ subsets: ["latin"] });
 
 const Board = () => {
+  // This state if for drag and drop destination
   const [destination, setDestination] = useState({});
   const { user } = useUser();
-  const { updatePaintMutation } = usePaintMutations();
+  const { updatePaintMutation, updateData } = usePaintMutations();
   const { setEditItem, setNewStock, paints, setPaints, token, setToken } =
     React.useContext(GlobalContext);
   const { getToken } = useAuth();
+
+  //Initial query to get all paints
   const { isLoading, isError, error, data } = useQuery(["paints"], async () =>
     getAllPaints((await getToken()) || "")
   );
 
+  // Update token on all data changes
   useEffect(() => {
     getToken().then((token) => {
       console.log(token);
@@ -41,15 +46,20 @@ const Board = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  // Function runs on all drag ends
   const onDragEnd = async (result: DropResult) => {
-    // console.log(result);
     if (user?.publicMetadata.role !== "edit") return;
     if (!result?.destination) return;
     if (result.destination.droppableId === result.source.droppableId) return;
 
     if (result.destination.droppableId === "Out of Stock") {
       setNewStock(0);
-      updateData(result, { stock: 0, id: result.draggableId }, paints);
+      updateData(
+        result,
+        { stock: 0, id: result.draggableId },
+        paints,
+        updatePaintMutation
+      );
     } else {
       setNewStock(
         data.filter(
@@ -57,6 +67,8 @@ const Board = () => {
         )[0].stock
       );
       setDestination(result);
+      // This is necessary for DaisyUI to work
+      // Ref: https://daisyui.com/components/modal/
       //@ts-ignore
       window.StockModal.showModal();
     }
@@ -68,34 +80,6 @@ const Board = () => {
       window.navigator.vibrate(100);
     }
   };
-
-  const updateData = async (result: any, paint: Paint, paints: Paint[]) => {
-    if (result === undefined) {
-      updatePaintMutation.mutate({
-        id: paint.id,
-        name: paint.name,
-        status: paint.status,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-    } else {
-      updatePaintMutation.mutate({
-        id: result.draggableId,
-        status: result.destination.droppableId,
-        updatedAt: new Date(),
-        stock: paint.stock,
-      });
-      const items = [...paints];
-
-      const [reorderedItem] = items.splice(result.source.index, 1);
-
-      items.splice(result.destination.index, 0, reorderedItem);
-
-      const idsOrderArray = items.map((task) => task.id);
-      localStorage.setItem("paintOrder", JSON.stringify(idsOrderArray));
-    }
-  };
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -104,6 +88,10 @@ const Board = () => {
   }
   return (
     <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+      <Head>
+        <title>Paint Stock Board</title>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </Head>
       <div
         className={`container mx-auto min-h-[100vh-60px] pt-10 ${inter.className}`}
       >
@@ -118,7 +106,10 @@ const Board = () => {
                   name: "",
                   status: "",
                   stock: 0,
-                }); // @ts-ignore
+                });
+                // This is necessary for DaisyUI to work
+                // Ref: https://daisyui.com/components/modal/
+                // @ts-ignore
                 window.NewModal.showModal();
               }}
             >

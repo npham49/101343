@@ -1,18 +1,24 @@
 import * as paintService from "../services/paint.service";
 import auth from "../auth/auth";
+import { Request } from "express";
 
-const getAllPaints = async (req: any, res: any) => {
+/**
+ * @description This function gets all the paints
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} res
+ */
+const getAllPaints = async (req: Request, res: any) => {
   try {
     const decoded = await auth(req, res);
     if (decoded.error) {
       return res.status(401).send(decoded.error);
     }
-    // console.log(decoded.decoded.metadata.role);
+    // Check a user's role which is stored in the metadata
     // @ts-ignore
     if (decoded.decoded.metadata.role === undefined) {
       return res.status(401).send("Not Authorized");
     }
-    console.log(decoded);
     const paints = await paintService.getAllPaints();
     return res.status(200).json(paints);
   } catch (error: any) {
@@ -21,12 +27,19 @@ const getAllPaints = async (req: any, res: any) => {
   }
 };
 
-const getPaint = async (req: any, res: any) => {
+/**
+ * @description This function get a paint by id
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} res
+ */
+const getPaint = async (req: Request, res: any) => {
   try {
     const decoded = await auth(req, res);
     if (decoded.error) {
       return res.status(401).send(decoded.error);
     }
+    // Check a user's role which is stored in the metadata
     // @ts-ignore
     if (decoded.decoded.metadata.role === undefined) {
       return res.status(401).send("Not Authorized");
@@ -39,14 +52,19 @@ const getPaint = async (req: any, res: any) => {
   }
 };
 
-const createPaint = async (req: any, res: any) => {
+/**
+ * @description This function creates a new paint
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} res
+ */
+const createPaint = async (req: Request, res: any) => {
   try {
     const decoded = await auth(req, res);
     if (decoded.error) {
       return res.status(401).send(decoded.error);
     }
-    // @ts-ignore
-    console.log(decoded.decoded.metadata.role);
+    // Check a user's role which is stored in the metadata
     // @ts-ignore
     if (decoded.decoded.metadata.role !== "edit") {
       return res.status(401).send("Not Authorized");
@@ -64,12 +82,19 @@ const createPaint = async (req: any, res: any) => {
   }
 };
 
-const updatePaint = async (req: any, res: any) => {
+/**
+ * @description This function updates a paint based on the attached request body
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} res
+ */
+const updatePaint = async (req: Request, res: any) => {
   try {
     const decoded = await auth(req, res);
     if (decoded.error) {
       return res.status(401).send(decoded.error);
     }
+    // Check a user's role which is stored in the metadata
     // @ts-ignore
     if (decoded.decoded.metadata.role !== "edit") {
       return res.status(401).send("Not Authorized");
@@ -88,12 +113,19 @@ const updatePaint = async (req: any, res: any) => {
   }
 };
 
-const deletePaint = async (req: any, res: any) => {
+/**
+ * @description This function Deletes paint by id
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Response} res
+ */
+const deletePaint = async (req: Request, res: any) => {
   try {
     const decoded = await auth(req, res);
     if (decoded.error) {
       return res.status(401).send(decoded.error);
     }
+    // Check a user's role which is stored in the metadata
     // @ts-ignore
     if (decoded.decoded.metadata.role !== "edit") {
       return res.status(401).send("Not Authorized");

@@ -8,6 +8,8 @@ type DroppableColumnProps = {
   status: string;
 };
 
+// This component is used to render the droppable columns
+// Takes the paint array and the status of the column as props
 const DroppableColumn = (props: DroppableColumnProps) => {
   return (
     <Droppable droppableId={props.status}>

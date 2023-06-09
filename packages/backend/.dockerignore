@@ -1,0 +1,6 @@
+node_modules
+build
+jest.config.js
+./__test__/**/**/*.test.ts
+*.test.ts
+./__test__/

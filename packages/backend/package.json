@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon src/app.ts"
+    "dev": "npx nodemon src/app.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

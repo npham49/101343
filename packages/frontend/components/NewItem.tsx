@@ -13,7 +13,7 @@ const NewItem = () => {
       <form method="dialog" className="modal-box">
         <h3 className="font-bold text-lg">New item</h3>
         <label className="label">
-          <span className="label-text">Stock</span>
+          <span className="font-bold label-text">Stock</span>
         </label>
         <input
           type="text"
@@ -30,7 +30,7 @@ const NewItem = () => {
           value={newPaint.stock}
         />
         <label className="label">
-          <span className="label-text">Paint Name</span>
+          <span className="font-bold label-text">Paint Name</span>
         </label>
         <input
           type="text"
@@ -43,7 +43,7 @@ const NewItem = () => {
           value={newPaint.name}
         />
         <label className="label">
-          <span className="label-text">Stock Status</span>
+          <span className="font-bold label-text">Stock Status</span>
         </label>
         <div className="form-control">
           <label className="label cursor-pointer">

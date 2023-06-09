@@ -1,7 +1,18 @@
 import * as paintService from "../services/paint.service";
+import auth from "../auth/auth";
 
 const getAllPaints = async (req: any, res: any) => {
   try {
+    const decoded = await auth(req, res);
+    if (decoded.error) {
+      return res.status(401).send(decoded.error);
+    }
+    // console.log(decoded.decoded.metadata.role);
+    // @ts-ignore
+    if (decoded.decoded.metadata.role === undefined) {
+      return res.status(401).send("Not Authorized");
+    }
+    console.log(decoded);
     const paints = await paintService.getAllPaints();
     return res.status(200).json(paints);
   } catch (error: any) {
@@ -12,6 +23,14 @@ const getAllPaints = async (req: any, res: any) => {
 
 const getPaint = async (req: any, res: any) => {
   try {
+    const decoded = await auth(req, res);
+    if (decoded.error) {
+      return res.status(401).send(decoded.error);
+    }
+    // @ts-ignore
+    if (decoded.decoded.metadata.role === undefined) {
+      return res.status(401).send("Not Authorized");
+    }
     const paint = await paintService.getPaint(Number(req.params.id));
     return res.status(200).json(paint);
   } catch (error: any) {
@@ -22,6 +41,16 @@ const getPaint = async (req: any, res: any) => {
 
 const createPaint = async (req: any, res: any) => {
   try {
+    const decoded = await auth(req, res);
+    if (decoded.error) {
+      return res.status(401).send(decoded.error);
+    }
+    // @ts-ignore
+    console.log(decoded.decoded.metadata.role);
+    // @ts-ignore
+    if (decoded.decoded.metadata.role !== "edit") {
+      return res.status(401).send("Not Authorized");
+    }
     const paint = await paintService.createPaint(
       req.body.name,
       Number(req.body.stock),
@@ -37,6 +66,14 @@ const createPaint = async (req: any, res: any) => {
 
 const updatePaint = async (req: any, res: any) => {
   try {
+    const decoded = await auth(req, res);
+    if (decoded.error) {
+      return res.status(401).send(decoded.error);
+    }
+    // @ts-ignore
+    if (decoded.decoded.metadata.role !== "edit") {
+      return res.status(401).send("Not Authorized");
+    }
     const paint = await paintService.updatePaint(
       Number(req.params.id),
       req.body.name,
@@ -53,6 +90,14 @@ const updatePaint = async (req: any, res: any) => {
 
 const deletePaint = async (req: any, res: any) => {
   try {
+    const decoded = await auth(req, res);
+    if (decoded.error) {
+      return res.status(401).send(decoded.error);
+    }
+    // @ts-ignore
+    if (decoded.decoded.metadata.role !== "edit") {
+      return res.status(401).send("Not Authorized");
+    }
     const paint = await paintService.deletePaint(Number(req.params.id));
     return res.status(200).json(paint);
   } catch (error: any) {

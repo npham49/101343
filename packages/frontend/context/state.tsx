@@ -8,6 +8,8 @@ interface IGlobalContextProps {
   setNewStock: (stock: number) => void;
   paints: Paint[];
   setPaints: (paints: Paint[]) => void;
+  token?: string | null;
+  setToken?: (token: string | null) => void;
 }
 
 export const GlobalContext = React.createContext<IGlobalContextProps>({
@@ -22,6 +24,8 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
   setNewStock: () => {},
   paints: [],
   setPaints: () => {},
+  token: "",
+  setToken: () => {},
 });
 
 export const GlobalContextProvider = (props: any) => {
@@ -35,6 +39,7 @@ export const GlobalContextProvider = (props: any) => {
   });
   const [newStock, setNewStock] = useState(0);
   const [paints, setPaints] = useState<Paint[]>([]);
+  const [token, setToken] = useState<string | null>("");
 
   return (
     <GlobalContext.Provider
@@ -51,6 +56,10 @@ export const GlobalContextProvider = (props: any) => {
         paints: paints,
         setPaints: (paints: Paint[]) => {
           setPaints(paints);
+        },
+        token: token,
+        setToken: (token: string | null) => {
+          setToken(token);
         },
       }}
     >

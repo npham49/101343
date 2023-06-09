@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import { useQuery } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
@@ -17,21 +17,26 @@ import NewItem from "@/components/NewItem";
 import Table from "@/components/Table";
 import EditItemForm from "@/components/EditItemForm";
 import StockForm from "@/components/StockForm";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 const Board = () => {
   const [destination, setDestination] = useState({});
   const { user } = useUser();
   const { updatePaintMutation } = usePaintMutations();
-  const { setEditItem, setNewStock, paints, setPaints } =
+  const { setEditItem, setNewStock, paints, setPaints, token, setToken } =
     React.useContext(GlobalContext);
-
-  const { isLoading, isError, error, data } = useQuery(
-    ["paints"],
-    getAllPaints
+  const { getToken } = useAuth();
+  const { isLoading, isError, error, data } = useQuery(["paints"], async () =>
+    getAllPaints((await getToken()) || "")
   );
+
   useEffect(() => {
+    getToken().then((token) => {
+      console.log(token);
+      localStorage.setItem("token", token || "");
+      if (setToken) setToken(token);
+    });
     setPaints(data ?? []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);

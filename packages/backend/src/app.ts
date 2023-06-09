@@ -1,11 +1,16 @@
+import "dotenv/config"; // To read CLERK_API_KEY
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import {
+  ClerkExpressRequireAuth,
+  ClerkExpressWithAuth,
+  RequireAuthProp,
+} from "@clerk/clerk-sdk-node";
 
 import paintRouter from "./routes/paint.route";
 
-require("dotenv").config();
 const app: Application = express();
 
 const PORT: number = Number(process.env.PORT) || 3000;

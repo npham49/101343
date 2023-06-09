@@ -3,11 +3,6 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import {
-  ClerkExpressRequireAuth,
-  ClerkExpressWithAuth,
-  RequireAuthProp,
-} from "@clerk/clerk-sdk-node";
 
 import paintRouter from "./routes/paint.route";
 
@@ -16,7 +11,7 @@ const app: Application = express();
 const PORT: number = Number(process.env.PORT) || 3000;
 
 const corsOptions = {
-  origin: process.env.ORIGIN_URL ?? "http://localhost:3000",
+  origin: process.env.ORIGIN_URL,
   credentials: true,
   optionsSuccessStatus: 200,
 };

@@ -9,6 +9,8 @@ interface IDraggableCardProps {
   index: number;
 }
 
+// This card is used to display the paint item in the list
+// Takes a paint item and an index as props
 const DraggableCard = (props: IDraggableCardProps) => {
   const { setEditItem } = useGlobalContext();
   const { user } = useUser();
@@ -44,6 +46,7 @@ const DraggableCard = (props: IDraggableCardProps) => {
             </p>
             <p>Stock: {props.paint.stock}</p>
           </div>
+          {/* Display edit based on user's role */}
           {user?.publicMetadata?.role === "edit" && (
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-14"
@@ -51,6 +54,8 @@ const DraggableCard = (props: IDraggableCardProps) => {
                 // setEdit(paint);
                 setEditItem(props.paint);
                 localStorage.setItem("edit.paint", JSON.stringify(props.paint));
+                // This is necessary for DaisyUI to work
+                // Ref: https://daisyui.com/components/modal/
                 // @ts-ignore
                 window.EditModal.showModal();
               }}

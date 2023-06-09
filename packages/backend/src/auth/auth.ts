@@ -1,7 +1,13 @@
 import { Request } from "express";
 import jwt from "jsonwebtoken";
 
-export default async function decode(req: Request, res: any) {
+// This code is used to decode the session token from Clerk's JWT
+// The session token is included in the request header
+// The session token is used to get the user's information
+// The token is decoded using the public key from the env variable
+// Thedecode token is returned or an error is returned
+
+const decode = async (req: Request, res: any) => {
   const splitPem = process.env.CLERK_JWT_VERIFICATION_KEY?.match(/.{1,64}/g);
   const publicKey =
     "-----BEGIN PUBLIC KEY-----\n" +
@@ -14,10 +20,12 @@ export default async function decode(req: Request, res: any) {
   }
   let decoded;
   try {
-    console.log(publicKey, sessToken);
+    // console.log(publicKey, sessToken);
     decoded = jwt.verify(sessToken || "", publicKey);
   } catch (error) {
     return { error: "Invalid token" };
   }
   return { decoded: decoded };
-}
+};
+
+export default decode;

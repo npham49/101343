@@ -7,6 +7,8 @@ type StockFormProps = {
   destination: any;
 };
 
+// Form shows up on drops, forcing users to update the stock
+// Only shows up  if the stock is different than Out of Stock
 const StockForm = (props: StockFormProps) => {
   const { newStock, setNewStock, paints } = React.useContext(GlobalContext);
   const { updatePaintMutation, updateData } = usePaintMutations();

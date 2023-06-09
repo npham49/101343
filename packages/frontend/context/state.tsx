@@ -12,6 +12,7 @@ interface IGlobalContextProps {
   setToken?: (token: string | null) => void;
 }
 
+// Global context to store the edit item and the new stock
 export const GlobalContext = React.createContext<IGlobalContextProps>({
   EditItem: {
     id: "",
@@ -28,6 +29,7 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
   setToken: () => {},
 });
 
+// This will allow for the states to persist across the app
 export const GlobalContextProvider = (props: any) => {
   const [editItem, setEditItem] = useState({
     EditItem: {

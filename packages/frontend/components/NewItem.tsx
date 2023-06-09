@@ -1,6 +1,8 @@
 import { usePaintMutations } from "@/mutations/paint";
 import React from "react";
 
+// Form shows up on new paint item creation
+// Send a request to the backend to create the paint item on submit
 const NewItem = () => {
   // This state is used to store the new paint item
   const [newPaint, setNewPaint] = React.useState({

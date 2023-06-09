@@ -2,6 +2,9 @@ import { GlobalContext } from "@/context/state";
 import { usePaintMutations } from "@/mutations/paint";
 import React from "react";
 
+// Form shows up on all paint edits
+// Send a request to the backend to update the paint item on submit
+// Also send a request to delete the paint item on delete
 const EditItemForm = () => {
   const { EditItem, setEditItem, paints } = React.useContext(GlobalContext);
   const { updatePaintMutation, deletePaintMutation, updateData } =

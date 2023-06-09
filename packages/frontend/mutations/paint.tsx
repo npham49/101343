@@ -3,8 +3,10 @@ import { Paint } from "@/typings";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 
+// Contain the react-query mutations for any API calls
 export const usePaintMutations = () => {
   const queryClient = useQueryClient();
+  // Mutation for updating a paint, show a toast on success or error
   const updatePaintMutation = useMutation(updatePaint, {
     onSuccess: () => {
       // Invalidates cache and refetch
@@ -16,6 +18,7 @@ export const usePaintMutations = () => {
     },
   });
 
+  // Mutation for creating a paint, show a toast on success or error
   const createPaintMutation = useMutation(createPaint, {
     onSuccess: () => {
       // Invalidates cache and refetch
@@ -27,6 +30,7 @@ export const usePaintMutations = () => {
     },
   });
 
+  // Mutation for deleting a paint, show a toast on success or error
   const deletePaintMutation = useMutation(deletePaint, {
     onSuccess: () => {
       // Invalidates cache and refetch
@@ -38,12 +42,14 @@ export const usePaintMutations = () => {
     },
   });
 
+  // Helper function to update paint data, it is resued across all forms and boards
   const updateData = async (
     result: any,
     paint: Paint,
     paints: Paint[],
     updatePaintMutation: any
   ) => {
+    // If result is undefined, this is an update request from the form with a new paint attached
     if (result === undefined) {
       updatePaintMutation.mutate({
         id: paint.id,
@@ -52,6 +58,7 @@ export const usePaintMutations = () => {
         updatedAt: new Date(),
         stock: paint.stock,
       });
+      // If result is defined, this is a drag and drop request
     } else {
       updatePaintMutation.mutate({
         id: result.draggableId,

@@ -6,6 +6,8 @@ type TableProps = {
   paints: Paint[];
 };
 
+// Table component that holds the three droppable columns
+// Renders out the whole board
 const Table = (props: TableProps) => {
   return (
     <div className="overflow-x-auto h-full">

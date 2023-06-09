@@ -2,6 +2,7 @@ import React from "react";
 import type { Paint } from "@/typings";
 import { Draggable } from "react-beautiful-dnd";
 import { useGlobalContext } from "@/context";
+import { useUser } from "@clerk/nextjs";
 
 interface IDraggableCardProps {
   paint: Paint;
@@ -9,7 +10,8 @@ interface IDraggableCardProps {
 }
 
 const DraggableCard = (props: IDraggableCardProps) => {
-  const { setEditItem, setNewStock } = useGlobalContext();
+  const { setEditItem } = useGlobalContext();
+  const { user } = useUser();
   return (
     <Draggable
       draggableId={String(props.paint.id)}
@@ -42,18 +44,20 @@ const DraggableCard = (props: IDraggableCardProps) => {
             </p>
             <p>Stock: {props.paint.stock}</p>
           </div>
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-14"
-            onClick={() => {
-              // setEdit(paint);
-              setEditItem(props.paint);
-              localStorage.setItem("edit.paint", JSON.stringify(props.paint));
-              // @ts-ignore
-              window.EditModal.showModal();
-            }}
-          >
-            Edit
-          </button>
+          {user?.publicMetadata?.role === "edit" && (
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-14"
+              onClick={() => {
+                // setEdit(paint);
+                setEditItem(props.paint);
+                localStorage.setItem("edit.paint", JSON.stringify(props.paint));
+                // @ts-ignore
+                window.EditModal.showModal();
+              }}
+            >
+              Edit
+            </button>
+          )}
         </div>
       )}
     </Draggable>

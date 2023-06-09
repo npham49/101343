@@ -17,12 +17,12 @@ import NewItem from "@/components/NewItem";
 import Table from "@/components/Table";
 import EditItemForm from "@/components/EditItemForm";
 import StockForm from "@/components/StockForm";
+import { useUser } from "@clerk/nextjs";
 const inter = Inter({ subsets: ["latin"] });
 
 const Board = () => {
-  // const [paints, setPaints] = useState<Paint[]>(data ?? []);
   const [destination, setDestination] = useState({});
-
+  const { user } = useUser();
   const { updatePaintMutation } = usePaintMutations();
   const { setEditItem, setNewStock, paints, setPaints } =
     React.useContext(GlobalContext);
@@ -38,6 +38,7 @@ const Board = () => {
 
   const onDragEnd = async (result: DropResult) => {
     // console.log(result);
+    if (user?.publicMetadata.role !== "edit") return;
     if (!result?.destination) return;
     if (result.destination.droppableId === result.source.droppableId) return;
 
@@ -103,26 +104,30 @@ const Board = () => {
       >
         <div className="flex flex-col md:flex-row justify-between items-center mb-2">
           <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
-          <button
-            className="btn btn-primary max-w-[150px] text-white"
-            onClick={() => {
-              setEditItem({
-                id: "",
-                name: "",
-                status: "",
-                stock: 0,
-              }); // @ts-ignore
-              window.NewModal.showModal();
-            }}
-          >
-            Add new paint
-          </button>
+          {user?.publicMetadata?.role === "edit" && (
+            <button
+              className="btn btn-primary max-w-[150px] text-white"
+              onClick={() => {
+                setEditItem({
+                  id: "",
+                  name: "",
+                  status: "",
+                  stock: 0,
+                }); // @ts-ignore
+                window.NewModal.showModal();
+              }}
+            >
+              Add new paint
+            </button>
+          )}
         </div>
+
         <Table paints={paints} />
         {/* Modal to input new stock on changin Status to Running Low or Available */}
         <StockForm destination={destination} />
         {/* Modal for editing paint information */}
         <EditItemForm />
+        {/* Modal for new items */}
         <NewItem />
         <ToastContainer
           position="top-center"

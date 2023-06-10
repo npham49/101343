@@ -62,7 +62,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="hero min-h-[400px] px-8 mt-32 md:mt-0">
+      <div className="hero min-h-[400px] max-h-[400px] px-8 mt-32 md:mt-0">
         <div className="hero-content flex-col lg:flex-row">
           <Image
             src="/editordrag.png"

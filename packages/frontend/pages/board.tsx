@@ -95,8 +95,8 @@ const Board = () => {
       <div
         className={`container mx-auto min-h-[100vh-60px] pt-10 ${inter.className}`}
       >
-        <div className="flex flex-col md:flex-row justify-between items-center mb-2">
-          <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
+        <div className="flex flex-row justify-between items-center mb-2">
+          <h1 className="text-2xl font-bold text-center">Paint Stock Board</h1>
           {user?.publicMetadata?.role === "edit" && (
             <button
               className="btn btn-primary max-w-[150px] text-white"

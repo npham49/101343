@@ -29,7 +29,7 @@ const DraggableCard = (props: IDraggableCardProps) => {
             opacity: snapshot.isDragging ? 0.5 : 1,
             ...provided.draggableProps.style,
           }}
-          className="flex flex-row space bg-white p-2 m-2 rounded-lg shadow-lg justify-between items-center"
+          className="flex flex-row space bg-white p-2 m-2 border-2 border-gray-400 rounded-lg shadow-lg justify-between items-center"
         >
           <div>
             <div className="text-lg font-semibold">{props.paint.name}</div>

@@ -26,7 +26,7 @@ export default function Home() {
         </div>
       )}
       <div
-        className="hero min-h-[400px]"
+        className="hero min-h-[400px] max-h-[400px]"
         style={{ backgroundImage: "url(/board_desktop.jpeg);" }}
       >
         <div className="hero-overlay bg-opacity-60"></div>
@@ -62,7 +62,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="hero min-h-[400px] max-h-[400px] px-8 mt-32 md:mt-0">
+      <div className="hero min-h-[400px] px-8 mt-[200px] md:mt-0">
         <div className="hero-content flex-col lg:flex-row">
           <Image
             src="/editordrag.png"
@@ -83,7 +83,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="hero min-h-[400px] px-8">
+      <div className="hero min-h-[400px] px-8 mt-[200px] md:mt-0">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <Image
             src="/mobile.jpg"

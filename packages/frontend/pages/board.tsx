@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { Inter } from "next/font/google";
 import { useQuery } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";

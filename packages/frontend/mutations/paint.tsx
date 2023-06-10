@@ -1,13 +1,17 @@
-import { updatePaint, createPaint, deletePaint } from "@/lib/paintApi";
+import { usePutPaint } from "@/lib/paintApi";
 import { Paint } from "@/typings";
 import { useMutation, useQueryClient } from "react-query";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-toastify";
+import { GlobalContext } from "@/context/state";
+import React from "react";
 
 // Contain the react-query mutations for any API calls
 export const usePaintMutations = () => {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
+  React.useContext(GlobalContext);
+  const { updatePaint, createPaint, deletePaint } = usePutPaint();
   // Mutation for updating a paint, show a toast on success or error
   const updatePaintMutation = useMutation(updatePaint, {
     onMutate: async () => {

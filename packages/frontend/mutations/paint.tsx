@@ -1,43 +1,75 @@
 import { updatePaint, createPaint, deletePaint } from "@/lib/paintApi";
 import { Paint } from "@/typings";
 import { useMutation, useQueryClient } from "react-query";
+import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 
 // Contain the react-query mutations for any API calls
 export const usePaintMutations = () => {
+  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   // Mutation for updating a paint, show a toast on success or error
   const updatePaintMutation = useMutation(updatePaint, {
+    onMutate: async () => {
+      getToken().then((token) => {
+        console.log(token);
+        localStorage.setItem("token", token || "");
+      });
+    },
     onSuccess: () => {
       // Invalidates cache and refetch
       queryClient.invalidateQueries("paints");
       toast.success("Paint updated successfully");
     },
     onError: (e: any) => {
+      getToken().then((token) => {
+        localStorage.setItem("token", token || "");
+      });
+      queryClient.invalidateQueries("paints");
       toast.error("Error updating paint", e.response.data.message);
     },
   });
 
   // Mutation for creating a paint, show a toast on success or error
   const createPaintMutation = useMutation(createPaint, {
+    onMutate: async () => {
+      getToken().then((token) => {
+        console.log(token);
+        localStorage.setItem("token", token || "");
+      });
+    },
     onSuccess: () => {
       // Invalidates cache and refetch
       queryClient.invalidateQueries("paints");
       toast.success("Paint created successfully");
     },
     onError: (e: any) => {
+      getToken().then((token) => {
+        localStorage.setItem("token", token || "");
+      });
+      queryClient.invalidateQueries("paints");
       toast.error("Error creating paint", e.response.data.message);
     },
   });
 
   // Mutation for deleting a paint, show a toast on success or error
   const deletePaintMutation = useMutation(deletePaint, {
+    onMutate: async () => {
+      getToken().then((token) => {
+        console.log(token);
+        localStorage.setItem("token", token || "");
+      });
+    },
     onSuccess: () => {
       // Invalidates cache and refetch
       queryClient.invalidateQueries("paints");
       toast.success("Paint deleted successfully");
     },
     onError: (e: any) => {
+      getToken().then((token) => {
+        localStorage.setItem("token", token || "");
+      });
+      queryClient.invalidateQueries("paints");
       toast.error("Error deleting paint", e.response.data.message);
     },
   });

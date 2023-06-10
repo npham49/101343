@@ -32,10 +32,10 @@ const DraggableCard = (props: IDraggableCardProps) => {
           className="flex flex-row space bg-white p-2 m-2 border-2 border-gray-400 rounded-lg shadow-lg justify-between items-center"
         >
           <div>
-            <div className="text-lg font-semibold">{props.paint.name}</div>
+            <div className="text-lg font-semibold mb-1">{props.paint.name}</div>
             <p>
               <span
-                className={`border-0 rounded-md p-[4px] m-[2px] text-white border-gray-400 align-top  ${
+                className={`border-0 rounded-md p-[4px] text-white border-gray-400 align-top  ${
                   props.paint.status === "Running Low" && " bg-yellow-600"
                 } ${props.paint.status === "Out of Stock" && " bg-red-600"} ${
                   props.paint.status === "Available" && " bg-green-600"
@@ -44,7 +44,7 @@ const DraggableCard = (props: IDraggableCardProps) => {
                 {props.paint.status}
               </span>
             </p>
-            <p>Stock: {props.paint.stock}</p>
+            <p className="mt-1">Stock: {props.paint.stock}</p>
           </div>
           {/* Display edit based on user's role */}
           {user?.publicMetadata?.role === "edit" && (

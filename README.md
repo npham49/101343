@@ -1,5 +1,32 @@
 # StockChecker - 101343
 
+# Table of content
+
+- [Preface](#preface)
+  - [User stories](#user-stories)
+  - [Asumptions](#asumptions)
+- [Implementation](#implementation)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+    - [GET All](#get-all)
+    - [GET One](#get-one)
+    - [POST](#post)
+    - [PUT](#put)
+    - [DELETE](#delete)
+- [Testing](#testing)
+  - [Backend](#backend-1)
+  - [Frontend](#frontend-1)
+    - [User Story 1 - John](#user-story-1---john)
+    - [User Story 2 - Jane](#user-story-2---jane)
+    - [User Story 3 - Painter](#user-story-3---painter)
+- [CI/CD](#ci-cd)
+  - [Pipeline](#pipeline)
+  - [Git contribution flow](#git-contribution-flow)
+  - [Database](#database)
+- [Running locally](#running-locally)
+
+# Preface
+
 Kanban style stock management website allowing users to drag and drop cards representing products between Out of Stock, Running Low and Available swim lanes.
 
 ## User stories

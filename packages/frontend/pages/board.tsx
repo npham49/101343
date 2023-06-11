@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import { useQuery } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
@@ -26,7 +26,7 @@ const Board = () => {
   const [destination, setDestination] = useState({});
   const { user } = useUser();
   const { updatePaintMutation, updateData } = usePaintMutations();
-  const { setEditItem, setNewStock, paints, setPaints, token, setToken } =
+  const { setEditItem, setNewStock, paints, setPaints, setToken } =
     React.useContext(GlobalContext);
   const { getToken } = useAuth();
 
@@ -95,8 +95,8 @@ const Board = () => {
       <div
         className={`container mx-auto min-h-[100vh-60px] pt-10 ${inter.className}`}
       >
-        <div className="flex flex-col md:flex-row justify-between items-center mb-2">
-          <h1 className="text-4xl font-bold text-center">Paint Stock Board</h1>
+        <div className="flex flex-row justify-between items-center mb-2">
+          <h1 className="text-2xl font-bold text-center">Paint Stock Board</h1>
           {user?.publicMetadata?.role === "edit" && (
             <button
               className="btn btn-primary max-w-[150px] text-white"
@@ -116,6 +116,44 @@ const Board = () => {
               Add new paint
             </button>
           )}
+        </div>
+        <p>
+          <span className="font-bold">Note:</span> Items with stock under 5 is
+          automatically set to Running Low.
+        </p>
+        <div className="mb-2">
+          <div className="join join-vertical w-full">
+            <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+              <input type="checkbox" />
+              <div className="collapse-title text-xl font-medium">
+                How to use this Board
+              </div>
+              <div className="collapse-content">
+                <div className="flex flex-col m-4">
+                  <span className="font-semibold">
+                    This app is designed to work similar to a Kanban board:
+                  </span>
+                  <ul className="list-disc ml-4">
+                    <li>Items can be dragged and dropped between columns</li>
+                    <li>Items can be edited by clicking the Edit button</li>
+                    <li>
+                      Items can be added by clicking the Add new paint button
+                    </li>
+                  </ul>
+                  <span className="font-semibold">Permissions:</span>
+                  <ul className="list-disc ml-4">
+                    <li>
+                      As a user with edit access you can drag and drop items
+                      between the columns.
+                    </li>
+                    <li>
+                      As a user with view access you can only view the items.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <Table paints={paints} />

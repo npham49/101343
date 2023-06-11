@@ -73,7 +73,7 @@ export default function Home() {
           />
           <div className="px-4">
             <h1 className="text-5xl font-bold text-left lg:text-center">
-              Multiple ways to edit!
+              Editor and Drag and Drop
             </h1>
             <p className="py-6">
               Choose between using the Edit button or dragging and dropping
@@ -94,7 +94,7 @@ export default function Home() {
           />
           <div className="px-4  text-left lg:text-center">
             <h1 className="text-5xl font-bold  text-left lg:text-center">
-              Mobile Friendly!
+              Mobile-only Features
             </h1>
             <p className="py-6">
               This app is designed to work on mobile devices as well as

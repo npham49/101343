@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import { useQuery } from "react-query";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
@@ -148,22 +148,6 @@ const Board = () => {
                     </li>
                     <li>
                       As a user with view access you can only view the items.
-                    </li>
-                  </ul>
-                  <span className="font-semibold">Functionalities:</span>
-                  <ul className="list-disc ml-4">
-                    <li>
-                      If an item if dragged to the Out of Stock column, the
-                      stock will be set to 0.
-                    </li>
-                    <li>
-                      If an item is dragged to the Running Low or Available
-                      column, a modal will pop up to allow you to input new
-                      stock.
-                    </li>
-                    <li>
-                      On mobile devices, on drag a vibration will be triggered
-                      to signal the start of the drag.
                     </li>
                   </ul>
                 </div>

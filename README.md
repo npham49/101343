@@ -135,7 +135,20 @@ Backend contains the following routes:
 
 ## Backend
 
-Backend testing is handled with jest, please refer to the code generated below for coverage
+Backend testing is handled with jest, please refer to the code generated below for coverage:
+
+| File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
+| ----------- | ------- | -------- | ------- | ------- | ----------------- |
+| All files   | 80.53   | 19.23    | 66.66   | 81.05   |
+| auth        | 23.07   | 0        | 0       | 25      |
+| auth.ts     | 23.07   | 0        | 0       | 25      | 11-28             |
+| controllers | 91.3    | 45.45    | 100     | 90      |
+| ...ller.ts  | 91.3    | 45.45    | 100     | 90      | ...,65,95,126,138 |
+| db          | 100     | 100      | 100     | 100     |
+| config.ts   | 100     | 100      | 100     | 100     |
+| ...eton.ts  | 100     | 100      | 100     | 100     |
+| services    | 71.42   | 100      | 40      | 78.57   |
+| ...vice.ts  | 71.42   | 100      | 40      | 78.57   | 7,17,83           |
 
 ## Frontend
 
@@ -193,6 +206,8 @@ Pipiline tests, builds and deploy each commit for testing.
 ![Alt text](./images/image.png)
 
 ## Git contribution flow
+
+'main' branch contains prod code and is protected. any changes has to be made in its own branch or in 'dev' and merged with a PR.
 
 ![Alt text](./images/image-1.png)
 

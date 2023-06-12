@@ -139,14 +139,11 @@ Backend testing is handled with jest, please refer to the code generated below f
 
 | File        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
 | ----------- | ------- | -------- | ------- | ------- | ----------------- |
-| All files   | 80.53   | 19.23    | 66.66   | 81.05   |
+| All files   | 78.64   | 19.23    | 63.63   | 79.06   |
 | auth        | 23.07   | 0        | 0       | 25      |
 | auth.ts     | 23.07   | 0        | 0       | 25      | 11-28             |
 | controllers | 91.3    | 45.45    | 100     | 90      |
 | ...ller.ts  | 91.3    | 45.45    | 100     | 90      | ...,65,95,126,138 |
-| db          | 100     | 100      | 100     | 100     |
-| config.ts   | 100     | 100      | 100     | 100     |
-| ...eton.ts  | 100     | 100      | 100     | 100     |
 | services    | 71.42   | 100      | 40      | 78.57   |
 | ...vice.ts  | 71.42   | 100      | 40      | 78.57   | 7,17,83           |
 

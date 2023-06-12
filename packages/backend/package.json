@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/src/app.js",
   "scripts": {
-    "test": "jest",
+    "test": "npx jest --detectOpenHandles",
     "dev": "npx nodemon src/app.ts",
     "build": "npx tsc"
   },

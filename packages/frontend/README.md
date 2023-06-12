@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Folder Structure
+
+```
+.
+├── components - Reusable components
+├── context - global states usable across the application
+├── lib - API calls
+├── mutations - react-query mutations with the API calls for use in any data handling with the API
+├── pages
+│   ├── api
+│   └── sign-in - Sign In routing
+├── public
+└── styles
+```
+
 ## Getting Started
 
 First, run the following command:

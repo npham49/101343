@@ -1,6 +1,8 @@
 node_modules
 build
-jest.config.js
-./__test__/**/**/*.test.ts
+./jest.config.js
+./src/__tests__/**/*.test.ts
 *.test.ts
-./__test__/
+./src/__tests__/
+./src/db/singleton.ts
+singleton.ts

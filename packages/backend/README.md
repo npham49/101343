@@ -1,4 +1,19 @@
-# StockeChecker backend setup
+# StockeChecker backend
+
+## File structure
+
+```
+.
+├── prisma - contains schema for setting up database with Prisma
+└── src
+    ├── auth - contains code for checking each rerquests's tokens
+    ├── controllers
+    ├── db - contain database connection client
+    ├── routes
+    └── services
+```
+
+## Local setup
 
 You will need to `cd` into this folder and tun the following command:
 

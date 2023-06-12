@@ -1,4 +1,4 @@
-import { prisma } from "../db/config";
+import prisma from "../db/config";
 /**
  * Get all paints
  * @returns {Paint[]} The paint object

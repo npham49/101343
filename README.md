@@ -196,7 +196,7 @@ Acceptance Criterias: Painter can view and update stock quickly.
 CD is handled by Vercel and Railway, which is the 2 deployment platforms. Both platforms detect pushes to dev and main branches, builds, configures and triggers a deployment on the respective environment.
 
 CI is handled by github actions.
-Pipiline tests, builds and deploy each commit for testing.
+Pipiline tests, builds and deploy each PR for testing.
 
 ## Pipeline
 
